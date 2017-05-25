@@ -27,3 +27,11 @@ loadComputerSoftware <- function(inputDir) {
 
 }
 
+downloadSysdata <- function(inputDir) {
+  
+  url <- "https://github.com/r-net-tools/security.datasets/raw/master/net.security/sysdata.rda"
+  path <- paste(inputDir,"sysdata.rda",sep = "/")
+  download.file(url = url, path)
+  
+}
+
