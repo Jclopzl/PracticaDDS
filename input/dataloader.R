@@ -12,7 +12,7 @@ loadComputerSoftware <- function(inputDir) {
   
   
   for (file in list.files(inputDir)) {
-    computer.entries <- read.csv(paste(inputDir,file,sep="/"),header=TRUE,sep=";")
+    computer.entries <- read.csv(paste(inputDir,file,sep="/"),header=TRUE,sep=";",stringsAsFactors = FALSE)
     computer.entries$computer <- rep(file,nrow(computer.entries))
     
     if (exists('all.computers.entries')) {
