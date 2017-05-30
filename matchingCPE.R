@@ -6,6 +6,10 @@
 # applications.name$cpes <- matchingCPEs
 matchingCPE <- function(applications.name, listado.cpe){
   
+  # Convert factor to string
+  listado.cpe <- data.frame(lapply(listado.cpe, as.character), stringsAsFactors=FALSE)
+  
+  
   # Convert to lower case cpes and computers
   applications.name <- tolower(applications.name)
   listado.cpe$title <- tolower(listado.cpe$title)
@@ -59,9 +63,18 @@ getMatchingCPEApplication <- function(application.name, listado.cpe){
   for(i in 1:length(matching_computer_cpe)){
     
     matching.words <- matching_computer_cpe[[i]]
-    matching.name.current <- paste("cpe",listado.cpe[j,]['part'],listado.cpe[j,]['vendor'],listado.cpe[j,]['product'],listado.cpe[j,]['version'],sep=":")
+    
+    matching.name.current <- paste(
+      "cpe",
+      listado.cpe[j,]['part'],
+      listado.cpe[j,]['vendor'],
+      listado.cpe[j,]['product'],
+      listado.cpe[j,]['version'],
+      sep=":")
+    
     matching.value.current <- sum(matching.words)
     if(  matching.value.current > matchCPE.value ) {
+      print(matching.name.current)
       matchCPE.name <- matching.name.current
       matchCPE.value <- matching.value.current
     }
@@ -86,6 +99,9 @@ getMatchingCPEListWords <- function(cpe.title, incoming.name.listofwords) {
   return( stringdist::ain(incoming.name.listofwords$ngrams,cpe.name.ng.listofwords$ngrams) )
   
 }
+out <- getMatchingCPEListWords( "windows", ngram::get.phrasetable(  ngram(c("microsoft cad windows"),1,sep=" ")  ))
+
+
 
 # res <- getMatchingCPEListWords( "windows xp", ngram::get.phrasetable(  ngram(c("microsoft cad xp csdadsa windows"),1,sep=" ")  ))
 
