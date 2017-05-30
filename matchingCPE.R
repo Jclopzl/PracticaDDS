@@ -74,6 +74,7 @@ getMatchingCPEApplication <- function(application.name, listado.cpe){
     
     matching.value.current <- sum(matching.words)
     if(  matching.value.current > matchCPE.value ) {
+      print(matching.name.current)
       matchCPE.name <- matching.name.current
       matchCPE.value <- matching.value.current
     }
