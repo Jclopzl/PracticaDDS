@@ -11,8 +11,16 @@ packages("ngram")
 packages("stringdist")
 packages("tidyr")
 packages("dplyr")
+# Required on CentOS to install devtools: yum install libcurl-devel
+# install.packages("devtools")
+packages("devtools")
+# devtools::install_github(repo = "r-net-tools/net.security")
+#  sudo yum install libxml2-devel required by XML package on CentOS 7
+# install.packages("XML") required by net.security
+packages("XML")
 packages("net.security")
-
+library("devtools")
+library("XML")
 library("ngram")
 library("stringdist")
 library("dplyr")
