@@ -1,7 +1,18 @@
-install.packages("ngram")
-install.packages("stringdist")
-install.packages("tidylr")
-install.packages("dplyr")
+# Utility package method
+packages<-function(x){
+  x<-as.character(match.call()[[2]])
+  if (!require(x,character.only=TRUE)){
+    install.packages(pkgs=x)
+    require(x,character.only=TRUE)
+  }
+}
+
+packages("ngram")
+packages("stringdist")
+packages("tidyr")
+packages("dplyr")
+packages("net.security")
+
 library("ngram")
 library("stringdist")
 library("dplyr")
