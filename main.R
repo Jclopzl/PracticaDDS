@@ -11,7 +11,7 @@ packages("ngram")
 packages("stringdist")
 packages("tidyr")
 packages("dplyr")
-packages("netsec")
+packages("net.security")
 
 library("ngram")
 library("stringdist")
