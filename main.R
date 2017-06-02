@@ -11,7 +11,11 @@ packages("ngram")
 packages("stringdist")
 packages("tidyr")
 packages("dplyr")
+<<<<<<< HEAD
 packages("netsec")
+=======
+packages("net.security")
+>>>>>>> 459ad461d300f192062724371d9218de8c9da994
 
 library("ngram")
 library("stringdist")
