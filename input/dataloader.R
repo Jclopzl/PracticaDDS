@@ -23,6 +23,8 @@ loadComputerSoftware <- function(inputDir) {
     }
   }
   
+  names(all.computers.entries) <- c("name","version","vendor","computer") 
+  
   return(all.computers.entries)
 
 }
@@ -32,6 +34,17 @@ downloadSysdata <- function(inputDir) {
   url <- "https://github.com/r-net-tools/security.datasets/raw/master/net.security/sysdata.rda"
   path <- paste(inputDir,"sysdata.rda",sep = "/")
   download.file(url = url, path)
+  
+}
+
+loadComputerCriticity <- function(computers.entries) {
+  
+  # Generación aleatoria de criticidad
+  computers.entries.criticity.rand <- dplyr::select(computers.entries,computer) %>% distinct() 
+  computers.entries.criticity.rand$criticidad <- as.data.frame(sample(x=rep(x=1:nrow(computers.entries.criticity.rand)%%2)))
+  names(computers.entries.criticity.rand) <- c("computer","criticidad")
+  
+  return(computers.entries.criticity.rand)
   
 }
 

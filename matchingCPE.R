@@ -59,7 +59,7 @@ getMatchingCPEApplication <- function(application.name, listado.cpe){
   matchCPE.value <- 0
   
   
-  j=1 
+  j=1
   for(i in 1:length(matching_computer_cpe)){
     
     matching.words <- matching_computer_cpe[[i]]

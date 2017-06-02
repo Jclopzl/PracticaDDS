@@ -1,4 +1,4 @@
-doMatchingApplicationsCPE <- function(computers.entries,cves) {
+doMatchingApplicationsCPE <- function(computers.entries,cpes) {
   
   # Generate lookup in order to make a relation or lookup table between software name and official CPE
   lookupCPEByApplication.ds <- lookupCPEByApplication(computers.entries$name)
