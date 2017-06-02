@@ -1,6 +1,7 @@
-#install.packages("ngram")
-#install.packages("stringdist")
-#install.packages("dplyr")
+install.packages("ngram")
+install.packages("stringdist")
+install.packages("tidylr")
+install.packages("dplyr")
 library("ngram")
 library("stringdist")
 library("dplyr")
@@ -27,7 +28,7 @@ INPUT_SECURITY_DIR <- "input"
 
 
 if(TRUE) {
-##downloadSysdata(INPUT_SECURITY_DIR)
+downloadSysdata(INPUT_SECURITY_DIR)
 load("~/workspace/gitrepos/repos/PracticaDDS/input/sysdata.rda")
 
 # Load all CVEs/CPEs. Take care of that, a lot of data is loaded
