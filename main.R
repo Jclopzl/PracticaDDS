@@ -7,23 +7,32 @@ packages<-function(x){
   }
 }
 
-packages("ngram")
-packages("stringdist")
-packages("tidyr")
-packages("dplyr")
-# Required on CentOS to install devtools: yum install libcurl-devel
-# install.packages("devtools")
-packages("devtools")
-# devtools::install_github(repo = "r-net-tools/net.security")
-#  sudo yum install libxml2-devel required by XML package on CentOS 7
-# install.packages("XML") required by net.security
-packages("XML")
-packages("net.security")
+# packages("ngram")
+# packages("stringdist")
+# packages("tidyr")
+# packages("dplyr")
+#   Required on CentOS to install devtools: yum install libcurl-devel
+#   install.packages("devtools")
+# packages("devtools")
+#   devtools::install_github(repo = "r-net-tools/net.security")
+#   sudo yum install libxml2-devel required by XML package on CentOS 7
+#   sudo yum install openssl-devel required by devtools/gitr package on CentOS 7
+#   install.packages("XML") required by net.security
+# packages("XML")
+# packages("net.security")
+# packages("sets")
 library("devtools")
 library("XML")
 library("ngram")
 library("stringdist")
+
+# Do not load, %>% in dpylr and tidylr is masked by sets
+#library("sets")
+# detach("package:sets", unload=TRUE)
 library("dplyr")
+library("tidyr")
+
+
 
 # Clear environment
 rm(list=ls())
@@ -40,31 +49,46 @@ source(paste(rootDir,"calculateScoring.R",sep = "/"))
 
 
 INPUT_COMPUTER_DIR <- paste(rootDir,"samples/input/computers/all",sep="/")
+INPUT_COMPUTER_CRITICITY_FILE <- paste(rootDir,"samples/input/computers/criticity.csv",sep="/")
 INPUT_SECURITY_DIR <- "input"
 
-#0 Load official cve/cpes
 
-
-
-if(TRUE) {
+# 1 Load official cve/cpes
 downloadSysdata(INPUT_SECURITY_DIR)
 load("~/workspace/gitrepos/repos/PracticaDDS/input/sysdata.rda")
 
-# Load all CVEs/CPEs. Take care of that, a lot of data is loaded
-#cves <- netsec.data$datasets$cves
+# All CVEs/CPEs. Take care of that, a lot of data is loaded
+cves <- netsec.data$datasets$cves
 cpes <- netsec.data$datasets$cpes
 
 # Only load a sample from all CVEs/CPEs.
 #cpes <- net.security::GetDataFrame("cpes") 
-cves <- net.security::GetDataFrame("cves")
+#cves <- net.security::GetDataFrame("cves")
 
-cpes <- head(cpes,n=60)
-
-#1 Collect data from PCs
+# 2 Collect data from PCs
 computers.entries <- loadComputerSoftware(INPUT_COMPUTER_DIR)
+computers.entries.criticity <- loadComputerCriticity(INPUT_COMPUTER_CRITICITY_FILE);
 
+# 3 Matching PC applications with CPE
+matchingCPE.ds <- doMatchingApplicationsCPE(
+  computers.entries=computers.entries,
+  listado.cpe=cpes,
+  jaccard=TRUE,
+  lookupCPEByApplication.ds.cache.use =TRUE,
+  lookupCPEByApplication.ds.cache.file="~/workspace/gitrepos/repos/PracticaDDS/cache/lookupCPEByApplication.ds.cache.RData",
+  applications.name.limit=50, 
+  listado.cpe.limit=NULL
+) 
 
-computers.entries.criticity <- loadComputerCriticity(computers.entries)
+if( ! is.na(Sys.getenv()["worker_all"]) & !  is.na(Sys.getenv()["worker_current"])) {
+  worker.all <- as.numeric(Sys.getenv("worker_all"))
+  worker.current <- as.numeric(Sys.getenv("worker_current"))
+  save(matchingCPE.ds,file=paste('~/workspace/gitrepos/repos/PracticaDDS/cache/matchingCPE.ds.worker',worker.current,".RData",sep=""))
+}
+
+if(FALSE) {
+
+  
 
 # OPTIONAL: Work with a small sample
 # computers.entries <- head(computers.entries,4) 
