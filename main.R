@@ -40,11 +40,12 @@ rm(list=ls())
 rootDir <- "~/workspace/gitrepos/repos/PracticaDDS"
 
 # Load scripts
-source(paste(rootDir,"input/dataloader.R",sep="/"))
+source(paste(rootDir,"input/inputLoader.R",sep="/"))
+source(paste(rootDir,"cache/cacheLoader.R",sep="/"))
+source(paste(rootDir,"matchCPE/matchingCPE.R",sep="/"))
+source(paste(rootDir,"matchCPE/lookupCPEByApplication.R",sep="/"))
+source(paste(rootDir,"matchCPE/doMatchingApplicationsCPE.R",sep = "/"))
 source(paste(rootDir,"comparar.R",sep="/"))
-source(paste(rootDir,"matchingCPE.R",sep="/"))
-source(paste(rootDir,"lookupCPEByApplication.R",sep="/"))
-source(paste(rootDir,"doMatchingApplicationsCPE.R",sep = "/"))
 source(paste(rootDir,"calculateScoring.R",sep = "/"))
 
 
@@ -69,21 +70,23 @@ cpes <- netsec.data$datasets$cpes
 computers.entries <- loadComputerSoftware(INPUT_COMPUTER_DIR)
 computers.entries.criticity <- loadComputerCriticity(INPUT_COMPUTER_CRITICITY_FILE);
 
-# 3 Matching PC applications with CPE
+# 3 Matching computer applications with CPE
 matchingCPE.ds <- doMatchingApplicationsCPE(
   computers.entries=computers.entries,
   listado.cpe=cpes,
-  jaccard=TRUE,
-  lookupCPEByApplication.ds.cache.use =TRUE,
-  lookupCPEByApplication.ds.cache.file="~/workspace/gitrepos/repos/PracticaDDS/cache/lookupCPEByApplication.ds.cache.RData",
-  applications.name.limit=50, 
-  listado.cpe.limit=NULL
+  threshold=0.5,
+  cache=TRUE,
+  distributed=FALSE,
+  applications.name.limit=2, 
+  listado.cpe.limit=50000
 ) 
 
-if( ! is.na(Sys.getenv()["worker_all"]) & !  is.na(Sys.getenv()["worker_current"])) {
-  worker.all <- as.numeric(Sys.getenv("worker_all"))
-  worker.current <- as.numeric(Sys.getenv("worker_current"))
-  save(matchingCPE.ds,file=paste('~/workspace/gitrepos/repos/PracticaDDS/cache/matchingCPE.ds.worker',worker.current,".RData",sep=""))
+if( FALSE ) {
+  if( ! is.na(Sys.getenv()["worker_all"]) & !  is.na(Sys.getenv()["worker_current"])) {
+    worker.all <- as.numeric(Sys.getenv("worker_all"))
+    worker.current <- as.numeric(Sys.getenv("worker_current"))
+    save(matchingCPE.ds,file=paste(rootDir,'cache/matchingCPE.ds.worker',worker.current,".RData",sep=""))
+  }
 }
 
 if(FALSE) {
