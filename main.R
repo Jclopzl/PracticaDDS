@@ -37,7 +37,9 @@ library("tidyr")
 # Clear environment
 rm(list=ls())
 
-rootDir <- "~/workspace/gitrepos/repos/PracticaDDS"
+rootDir <- "~/workspace/gitrepos/repos/PracticaDDS2"
+
+rootDir <- getwd()
 
 # Load scripts
 source(paste(rootDir,"input/inputLoader.R",sep="/"))
@@ -55,7 +57,7 @@ INPUT_SECURITY_DIR <- "input"
 
 
 # 1 Load official cve/cpes
-downloadSysdata(INPUT_SECURITY_DIR)
+#downloadSysdata(INPUT_SECURITY_DIR)
 load("~/workspace/gitrepos/repos/PracticaDDS/input/sysdata.rda")
 
 # All CVEs/CPEs. Take care of that, a lot of data is loaded

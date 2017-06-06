@@ -8,7 +8,7 @@ doMatchingApplicationsCPE <- function(
   threshold=0.5,
   cache=FALSE,
   distributed=FALSE,
-  root.dir='~/workspace/gitrepos/repos/PracticaDDS',
+  root.dir=getwd(),
   applications.name.limit=NULL, 
   listado.cpe.limit=NULL
 ) {

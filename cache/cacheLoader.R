@@ -1,6 +1,6 @@
 library("tidyr")
 
-loadCacheMatchingCPE <- function(root.dir='~/workspace/gitrepos/repos/PracticaDDS') {
+loadCacheMatchingCPE <- function(root.dir= getwd()) {
 
   input.dir <- paste(root.dir,'cache',sep='/')
   file.name <- 'matchingCPE.ds.cache.RData'
@@ -16,7 +16,7 @@ loadCacheMatchingCPE <- function(root.dir='~/workspace/gitrepos/repos/PracticaDD
   
 }
 
-loadCacheLookupCPEByApplicaton <- function(root.dir='~/workspace/gitrepos/repos/PracticaDDS') {
+loadCacheLookupCPEByApplicaton <- function(root.dir=getwd()) {
 
   input.dir <- paste(root.dir,'cache',sep='/')
   file.name <- 'lookupCPEByApplication.ds.cache.RData'
@@ -32,7 +32,7 @@ loadCacheLookupCPEByApplicaton <- function(root.dir='~/workspace/gitrepos/repos/
 
 }
 
-buildAndSaveCacheMatchingCPE <- function(root.dir='~/workspace/gitrepos/repos/PracticaDDS') {
+buildAndSaveCacheMatchingCPE <- function(root.dir=getwd()) {
   
   input.dir <- paste(root.dir,'cache',sep='/')
 
