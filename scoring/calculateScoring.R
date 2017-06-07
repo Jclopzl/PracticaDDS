@@ -14,10 +14,17 @@ calculateScoring <- function(computers.entries.cves, computers.entries.cricity) 
   computers.entries.scoring$cvsse <- sapply(computers.entries.scoring$cvss, function(cvss) return(cvss) )
   computers.entries.scoring$cvsse <- as.numeric(computers.entries.scoring$cvsse)
   
+  #for( j in 1:nrow(computers.entries.scoring) ) {
+  #  if( computers.entries.scoring['criticidad'][j] > 0) {
+  #    computers.entries.scoring['cvsse'][j] <-  computers.entries.scoring['cvsse'][j] + 2
+  #  }
+  #  j <- j+1
+  #}
+  
   # Set critical cvss
   for( j in 1:nrow(computers.entries.scoring) ) {
-    if( computers.entries.scoring['criticidad'][j] > 0) {
-      computers.entries.scoring['cvsse'][j] <-  computers.entries.scoring['cvsse'][j] + 2
+    if( computers.entries.scoring['criticidad'][[1]][j] > 0) {
+      computers.entries.scoring['cvsse'][[1]][j] <-  computers.entries.scoring['cvsse'][[1]][j] + 2
     }
     j <- j+1
   }

@@ -47,8 +47,8 @@ source(paste(rootDir,"cache/cacheLoader.R",sep="/"))
 source(paste(rootDir,"matchCPE/matchingCPE.R",sep="/"))
 source(paste(rootDir,"matchCPE/lookupCPEByApplication.R",sep="/"))
 source(paste(rootDir,"matchCPE/doMatchingApplicationsCPE.R",sep = "/"))
-source(paste(rootDir,"comparar.R",sep="/"))
-source(paste(rootDir,"calculateScoring.R",sep = "/"))
+source(paste(rootDir,"matchCVE/doMatchingApplicationsCVE.R",sep = "/"))
+source(paste(rootDir,"scoring/calculateScoring.R",sep = "/"))
 
 
 INPUT_COMPUTER_DIR <- paste(rootDir,"samples/input/computers/all",sep="/")
@@ -72,16 +72,24 @@ cpes <- netsec.data$datasets$cpes
 computers.entries <- loadComputerSoftware(INPUT_COMPUTER_DIR)
 computers.entries.criticity <- loadComputerCriticity(INPUT_COMPUTER_CRITICITY_FILE);
 
-# 3 Matching computer applications with CPE
-matchingCPE.ds <- doMatchingApplicationsCPE(
+# 3 Matching computer applications with official CPE
+computers.entries.cpes <- doMatchingApplicationsCPE(
   computers.entries=computers.entries,
   listado.cpe=cpes,
   threshold=0.5,
   cache=TRUE,
   distributed=FALSE,
-  applications.name.limit=2, 
-  listado.cpe.limit=50000
+  applications.name.limit=0, 
+  listado.cpe.limit=0
 ) 
+
+# 4 Mathicng computer CPEs with official CVEs
+computers.entries.cves <- doMatchingApplicationsCVE(computers.entries.cpes, cves )
+
+# 5 Evaluate scoring
+computers.entries.scoring <- calculateScoring (computers.entries.cves, computers.entries.criticity)
+
+
 
 if( FALSE ) {
   if( ! is.na(Sys.getenv()["worker_all"]) & !  is.na(Sys.getenv()["worker_current"])) {
