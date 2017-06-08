@@ -1,0 +1,112 @@
+---
+title: "Practica Salud"
+author: "DAJC"
+date: "30 de mayo de 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, carrega_packages, include=F}
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+## Asignacion contenido a la variable vulnerabilidades_grah
+setwd("~/R/PracticaDDS-Simulada/")
+fichero <- "fichero_simulacion.csv"
+vulnerabilidades_graph = read.table(fichero,header=T,sep=";")
+
+
+```
+
+## GRAFICO 1
+
+```{r,grafic_vulnerabilitats,include=F}
+
+cvss_count <-vulnerabilidades_graph %>% group_by(cvss) %>% summarise(n=n())
+
+b_grafic_1 <- ggplot(head(cvss_count, n = 10), aes(x=cvss, y=n, fill=cvss))
+
+# creem grafic amb x com a multiples vendors
+grafic_1 <- b_grafic_1 + geom_bar(stat = "identity")
+
+```
+
+
+```{r cars, echo=F}
+grafic_1
+```
+
+
+
+```{r,grafic_niveles,include=F}
+
+computers_nivel <-vulnerabilidades_graph %>% group_by(nivel) %>% summarise(n=n())
+
+b_grafic_2 <- ggplot(head(computers_nivel, n = 10), aes(x=nivel, y=n, fill=nivel))
+##b_grafic_2 <- ggplot(head(computers_nivel, n = 10), aes(x="", y=n, fill=cvss))
+
+
+# creem grafic amb x com a unic vendor
+grafic_2 <- b_grafic_2 + geom_bar(stat = "identity")
+
+# pie chart:
+grafic_3 <- grafic_2 + coord_polar("y", start=0)
+
+
+```
+
+
+
+## GRAFICO 2
+
+
+
+```{r grafico, echo=FALSE}
+
+grafic_2
+
+
+grafic_3
+```
+
+
+
+## ==================================================================================
+
+
+```{r,grafic niveles_2,include=F}
+
+# cvss_count <- count(x = vulnerabilidades_grah, cvss, sort = T)
+# cvss_count <-vulnerabilidades_grah %>% group_by(cvss) %>% summarise(n=n())
+# computers_nivel <-vulnerabilidades_grah %>% group_by(nivel) %>% summarise(n=n())
+
+# b_grafic_1 <- ggplot(head(cvss_count, n = 10), aes(x=cvss, y=n, fill=cvss))
+# b_grafic_2 <- ggplot(head(cvss_count, n = 10), aes(x="", y=n, fill=cvss))
+
+# creem grafic amb x com a multiples vendors
+# grafic_1 <- b_grafic_1 + geom_bar(stat = "identity")
+
+# creem grafic amb x com a unic vendor
+# grafic_2 <- b_grafic_2 + geom_bar(stat = "identity")
+
+# pie chart:
+# grafic_3 <- grafic_2 + coord_polar("y", start=0)
+
+
+```
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r grafic, echo=FALSE}
+## grafic_3
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
