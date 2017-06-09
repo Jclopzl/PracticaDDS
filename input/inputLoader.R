@@ -72,3 +72,16 @@ loadComputerCriticity <- function(input.file, computer.entries=NULL, random=FALS
   
 }
 
+# Load simulation data for testing visualization phase
+#
+# @param root.dir project root dir to find CSV
+#
+loadScoringTesting <- function(root.dir=getwd()) {
+  
+  input.dir <- paste(root.dir,"samples/input/visualization",'cache',sep='/')
+  file.name <- 'scoring_test.csv'
+  file.fullname <- paste( input.dir,file.name,sep="/")
+  computers.entries.scoring <- read.table(file.name,header=T,sep=";")
+  return(computers.entries.scoring)
+
+}

@@ -16,6 +16,22 @@ loadCacheMatchingCPE <- function(root.dir= getwd()) {
   
 }
 
+loadCacheMatchingCVE <- function(root.dir= getwd()) {
+  
+  input.dir <- paste(root.dir,'cache',sep='/')
+  file.name <- 'matchingCVE.ds.cache.RData'
+  file.fullname <- paste( input.dir,file.name,sep="/")
+  
+  if(file.exists(file.fullname)) {
+    load(file = file.fullname)
+  } else {
+    return(NULL);
+  }
+  
+  return(matchingCVE.ds.cache)
+  
+}
+
 loadCacheLookupCPEByApplicaton <- function(root.dir=getwd()) {
 
   input.dir <- paste(root.dir,'cache',sep='/')
@@ -30,6 +46,22 @@ loadCacheLookupCPEByApplicaton <- function(root.dir=getwd()) {
   
   return(lookupCPEByApplication.ds.cache)
 
+}
+
+loadCacheScoring <- function(root.dir=getwd()) {
+  
+  input.dir <- paste(root.dir,'cache',sep='/')
+  file.name <- 'scoring.ds.cache.RData'
+  file.fullname <- paste( input.dir,file.name,sep="/")
+  
+  if(file.exists(file.fullname)) {
+    load(file = file.fullname)
+  } else {
+    return(NULL);
+  }
+  
+  return(scoring.ds.cache)
+  
 }
 
 buildAndSaveCacheMatchingCPE <- function(root.dir=getwd()) {
@@ -50,4 +82,20 @@ buildAndSaveCacheMatchingCPE <- function(root.dir=getwd()) {
   matchingCPE.ds.cache <- matchingCPE.ds.all
   save(matchingCPE.ds.cache,file = paste( input.dir,'matchingCPE.ds.cache.RData',sep="/"))
 
+}
+
+loadCacheMatchingCVE <- function(root.dir=getwd()) {
+  
+  input.dir <- paste(root.dir,'cache',sep='/')
+  file.name <- 'matchingCVE.ds.cache.RData'
+  file.fullname <- paste( input.dir,file.name,sep="/")
+  
+  if(file.exists(file.fullname)) {
+    load(file = file.fullname)
+  } else {
+    return(NULL);
+  }
+  
+  return(matchingCVE.ds.cache)
+  
 }

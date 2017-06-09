@@ -1,13 +1,98 @@
 ---
-title: "Practica Salud"
-author: "DAJC"
-date: "30 de mayo de 2017"
+title: "Monitorización nivel de “salud” de una red corporativa de PC’s"
+author: "Juan Carlos, Fco.Javier Motos, Alonso Flores y David Martín"
+date: "Junio 2017"
 output: html_document
 ---
 
+
+
+ 
+#####Objetivo de la práctica
+ 
+La práctica consiste en obtener el nivel de salud del parque de PCs en una empresa en función de las vulnerabilidades que tienen.
+ 
+ 
+#####Condiciones:
+
+Teniendo en cuenta que el CVSS se basa en la combinación de tres métricas, la presente práctica parte del valor BASE asignado a cada vulnerabilidad en su publicación. Este valor se ve modificado por factores TEMPORALES y de ENTORNO. En nuestro caso solo hemos considerado 2 de ellos:
+el base y el de entorno.
+ 
+ 
+###Preguntas a responder
+ 
+####ÁMBITO PC’s
+ 
+- Distribución % equipos por nº vulnerabilidades
+- Distribución % por nivel de criticidad
+- Salud del parque global
+ 
+####ÁMBITO VULNERABILIDADES
+ 
+- % de vulnerabilidades por criticidad
+- Ranking de fabricantes más vulnerables
+ 
+ 
+####AMBITO APLICACION
+ 
+- Ranking de aplicaciones por nº de vulnerabilidades
+- Ranking de aplicaciones por criticidad de vulnerabilidades
+ 
+ 
+ 
+
+
+ 
+ 
+####El flujo planteado es:
+
+ 
+* Obtener el software instalado de las máquinas de la empresa (se identifican: Nombre del programa y Versión)
+* Obtención del listado de CPEs oficiales de dichos programas
+* Se realiza un matching entre CPEs y listado de software por cada máquina.
+* Obtenemos un listado de CVEs actualizados
+* Se realiza un matching entre CVE y los CPE encontrados en el listado de software de cada máquina
+* Se establece un sistema de scoring de vulnerabilidades basado en el CVSS y se asigna un valor de “salud” por cada máquina.
+* Se visualizar los resultados desde diferentes perspectivas
+ 
+ 
+ 
+####NOTA: Para garantizar la presentación de resultados se ha desarrollado un módulo específico para la creación de un entorno simulado partiendo de las siguientes condiciones:
+
+
+* Fichero con el listado de los programas comprados por la empresa 
+
+* Fichero con los PC’s instalados en la empresa y su criticidad
+
+* Creación de un fichero de vulnerabilidades por software (número aleatorio de vulnerabilidades y también severidad aleatoria)
+
+* Creación de un entorno ficción en el que cada pc tiene un número aleatorio de programas instalados, a partir del cual se genera el fichero final con la relación de software y vulnerabilidades instaladas por pc en la compañía
+ 
+#####Condiciones de dicha función:
+
+  * 100 pc’s
+  * 23 programas corporativos
+  * n   vulnerabilidades
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+input.dir <- paste(getwd(),sep='/')
 ```
+
+####_Fuente de datos_
+
+<div align="center">
+![Fuente de datos](`r input.dir`/fuentes.jpg)
+</div>
+</p>
+
+####_Algoritmo y funciones_
+<div align="center">
+![Algoritmo y funciones](`r input.dir`/algoritmo.jpg)
+</div>
+</p>
+
 
 ```{r, carrega_packages, include=F}
 library(readr)
@@ -15,14 +100,24 @@ library(dplyr)
 library(ggplot2)
 
 ## Asignacion contenido a la variable vulnerabilidades_grah
-setwd("~/R/PracticaDDS-Simulada/")
-fichero <- "fichero_simulacion.csv"
-vulnerabilidades_graph = read.table(fichero,header=T,sep=";")
+#getwd("~/ShynyDavid/AF/")
+#fichero <- "fichero_simulacion.csv"
+#vulnerabilidades_graph = read.table(fichero,header=T,sep=";")
+input.dir <- paste(getwd(),"..",'cache',sep='/')
+file.name <- 'scoring.ds.cache.RData'
+file.fullname <- paste( input.dir,file.name,sep="/")
+print(file.fullname)
 
+load(file.fullname)
+
+print(computers.entries.scoring)
+vulnerabilidades_graph <- computers.entries.scoring
 
 ```
+#**Resultados**
 
-## GRAFICO 1
+
+## _Gráfico 1_
 
 ```{r,grafic_vulnerabilitats,include=F}
 
@@ -61,7 +156,7 @@ grafic_3 <- grafic_2 + coord_polar("y", start=0)
 
 
 
-## GRAFICO 2
+## _Gráfico 2_
 
 
 
