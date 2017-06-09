@@ -1,9 +1,9 @@
-# Calculate an scoring for each computer+
+#' Calculate an scoring for each computer+
 #
-# @param computers.entries.cves computer information with cves for each PC
-# @param computers.entries.criticity Criticity factor for each PC, depnding on their importance for the business.
-# @param cache Load precalculated scoring according original source
-# @param use_simulation true if use a sample file used to test visualization
+#' @param computers.entries.cves computer information with cves for each PC
+#' @param computers.entries.criticity Criticity factor for each PC, depnding on their importance for the business.
+#' @param cache Load precalculated scoring according original source
+#' @param use_simulation true if use a sample file used to test visualization
 calculateScoring <- function(computers.entries.cves, computers.entries.criticity, cache=FALSE,use_simulation=FALSE) {
 
   

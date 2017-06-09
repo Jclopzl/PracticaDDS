@@ -1,11 +1,11 @@
 
 
-# For each CPE of a computer, found the related CVE using current calculated cpes
-# and official cves list
+#' For each CPE of a computer, found the related CVE using current calculated cpes
+#' and official cves list
 #
-# @param computers.entries.cpes application of cumputers with CPE identifier
-# @param nist.entries.cves Official CVE list from nist
-# @param cache Do not do any calculation, use precalculated data
+#' @param computers.entries.cpes application of cumputers with CPE identifier
+#' @param nist.entries.cves Official CVE list from nist
+#' @param cache Do not do any calculation, use precalculated data
 # 
 doMatchingApplicationsCVE <- function(computers.entries.cpes, nist.entries.cves, cache=FALSE, root.dir=getwd()) {
 
