@@ -26,12 +26,6 @@ file.fullname <- paste(file.name.dir,file.name,sep="/")
 load(file.fullname)
 vulnerabilidades_graph <- scoring.ds.cache
 
-file.name <- 'lookupCPEByApplication.ds.cache.Rdata'
-file.fullname <- paste(file.name.dir,file.name,sep="/")
-load(file.fullname)
-cpeByApp <- data.frame(lookupCPEByApplication.ds.cache)
-names(cpeByApp) <- c("Software names")
-
 file.name <- 'matchingCPE.ds.cache.RData'
 file.fullname <- paste(file.name.dir,file.name,sep="/")
 load(file.fullname)
@@ -96,15 +90,17 @@ La salud de parque la determinamos a partir de una serie de gráficos que presen
 
 ####El flujo planteado es:
 
-* Obtener el software instalado de las máquinas de la empresa (se identifican: Nombre del programa y Versión)
+* Obtener el software instalado de las máquinas de la empresa (Se identifican: nombre del software, versión, fabricante y nombre del computador)
 ```{r echo=FALSE}
-head(cpeByApp,10)
+softwares <- matchCve[-5]
+softwares <- softwares[-5]
+head(tail(softwares,137932),5)
 ```
 * Obtención del listado de CPEs oficiales de dichos programas, como por ejemplo:
 ```{r echo=FALSE}
 c(cpes$cpe.23[1178],cpes$title[1178],as.character(cpes$product[1178]))
 ```
-* Se realiza un matching entre CPEs y listado de software por cada máquina.
+* Se realiza un matching entre CPEs y listado de software por cada máquina, para lo cual se utiliza el coeficiente de Jaccard para medir el grado de similitud entre CPE's y softwares.
 ```{r echo=FALSE}
 head(matchCpe,5)
 ```
