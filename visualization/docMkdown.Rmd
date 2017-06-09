@@ -1,0 +1,318 @@
+---
+title: "Monitorización nivel de “salud” de una red corporativa de PC’s"
+author: "Juan Carlos López, Fco. Javier Motos, Alonso Flores y David Martín"
+date: "Junio 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+input.dir <- paste(getwd(),sep='/')
+```
+
+```{r, carrega_packages, include=FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+file.name.dir <- paste(getwd(),"..",'samples','input','visualization',sep='/')
+file.name <- 'scoring_test.csv'
+file.fullname <- paste(file.name.dir,file.name,sep="/")
+sim_graph = read.table(file.fullname,header=T,sep=";")
+
+file.name.dir <- paste(getwd(),"..",'cache',sep='/')
+file.name <- 'scoring.ds.cache.RData'
+file.fullname <- paste(file.name.dir,file.name,sep="/")
+load(file.fullname)
+vulnerabilidades_graph <- scoring.ds.cache
+
+file.name <- 'lookupCPEByApplication.ds.cache.Rdata'
+file.fullname <- paste(file.name.dir,file.name,sep="/")
+load(file.fullname)
+cpeByApp <- data.frame(lookupCPEByApplication.ds.cache)
+names(cpeByApp) <- c("Software names")
+
+file.name <- 'matchingCPE.ds.cache.RData'
+file.fullname <- paste(file.name.dir,file.name,sep="/")
+load(file.fullname)
+matchCpe <- data.frame(matchingCPE.ds.cache)
+matchCpe <- matchCpe[-4]
+matchCpe <- matchCpe[-3]
+
+file.name <- 'matchingCVE.ds.cache.RData'
+file.fullname <- paste(file.name.dir,file.name,sep="/")
+load(file.fullname)
+matchCve <- data.frame(matchingCVE.ds.cache)
+
+file.name.dir <- paste(getwd(),"..",'input',sep='/')
+file.name <- 'sysdata.rda'
+file.fullname <- paste(file.name.dir,file.name,sep="/")
+load(file.fullname)
+cpes <- netsec.data$datasets$cpes
+cves <- netsec.data$datasets$cves
+
+```
+
+#####Objetivo de la práctica
+ 
+La práctica consiste en obtener el nivel de salud del parque de PCs en una empresa en función de las vulnerabilidades que tienen.
+
+#####Condiciones:
+
+Teniendo en cuenta que el CVSS se basa en la combinación de tres métricas, la presente práctica parte del valor BASE asignado a cada vulnerabilidad en su publicación. Este valor se ve modificado por factores TEMPORALES y de ENTORNO. En nuestro caso solo hemos considerado 2 de ellos:
+**el base y el de entorno.**
+ 
+#####Criterio de referencia
+ 
+El criterio utilizado se basa en el CVSS - Common Vulnerability Scoring System v3.0. Creado en 2004, se ha convertido en un standard. CVSS es un entorno de trabajo diseñado para comunicar las características y la severidad de las vulnerabilidades de software. 
+ 
+_CVSS - Common Vulnerability Scoring System v3.0_
+ 
+  **3 Importantes beneficios**
+ 
+1. Proporciona puntuaciones de vulnerabilidad estandarizadas. Cuando una organización utiliza un algoritmo para anotar vulnerabilidades en todas las plataformas de TI, puede definir una política de gestión de vulnerabilidades que define el tiempo máximo permitido para validar y remediar una vulnerabilidad dada.
+
+
+2. Provee un marco abierto. Los usuarios pueden confundirse cuando se asigna una vulnerabilidad una puntuación arbitraria por un tercero. Con CVSS, las características individuales derivan una puntuación transparente.
+
+
+3. CVSS ayuda a priorizar el riesgo. Cuando se calcula la puntuación de entorno, la vulnerabilidad se convierte en contextual para cada organización, y ayuda a proporcionar una mejor comprensión del riesgo que representa una vulnerabilidad para la organización.
+
+<div align="center">
+![Criterios CVSS](`r input.dir`/criterioscvss.jpg)
+</div>
+</p> 
+
+Teniendo en cuenta que el CVSS se basa en la combinación de tres métricas, la presente práctica parte del valor BASE asignado a cada vulnerabilidad en su publicación. Este valor se ve modificado por factores TEMPORALES y de ENTORNO. En nuestro caso solo hemos considerado 2 de ellos, el base y el de entorno.
+
+###Preguntas a responder
+ 
+La salud de parque la determinamos a partir de una serie de gráficos que presentan la distribución de las vulnerabilidades y criticidades en el parque de la empresa:
+ 
+* Distribución del nº de vulnerabilidades por valor CVSS
+* Distribución del nº de vulnerabilidades por valor nivel criticidad
+* Mapa de dispersión vulnerabilidades parque cliente
+* Mapa distribución vulnerabilidades por valor escala de criticidad
+
+####El flujo planteado es:
+
+* Obtener el software instalado de las máquinas de la empresa (se identifican: Nombre del programa y Versión)
+```{r echo=FALSE}
+head(cpeByApp,10)
+```
+* Obtención del listado de CPEs oficiales de dichos programas, como por ejemplo:
+```{r echo=FALSE}
+c(cpes$cpe.23[1178],cpes$title[1178],as.character(cpes$product[1178]))
+```
+* Se realiza un matching entre CPEs y listado de software por cada máquina.
+```{r echo=FALSE}
+head(matchCpe,5)
+```
+* Obtenemos un listado de CVEs actualizados
+```{r echo=FALSE}
+c(cves$cve[41389],cves$description[41389])
+```
+* Se realiza un matching entre CVE y los CPE encontrados en el listado de software de cada máquina
+```{r echo=FALSE}
+head(tail(matchCve,100),5)
+```
+* Se establece un sistema de scoring de vulnerabilidades basado en el CVSS y se asigna un valor de “salud” por cada máquina.
+```{r echo=FALSE}
+aux <- data.frame(vulnerabilidades_graph)
+aux <- aux[-2]
+aux <- aux[-2]
+aux <- aux[-5]
+aux <- aux[-5]
+aux <- aux[-6]
+aux <- aux[-4]
+head(aux,10)
+```
+* Se visualiza los resultados desde diferentes perspectivas
+
+####NOTA: Para garantizar la presentación de resultados se ha desarrollado un módulo específico para la creación de un entorno simulado partiendo de las siguientes condiciones:
+
+* Fichero con el listado de los programas comprados por la empresa 
+
+* Fichero con los PC’s instalados en la empresa y su criticidad
+
+* Creación de un fichero de vulnerabilidades por software (número aleatorio de vulnerabilidades y también severidad aleatoria)
+
+* Creación de un entorno ficción en el que cada pc tiene un número aleatorio de programas instalados, a partir del cual se genera el fichero final con la relación de software y vulnerabilidades instaladas por pc en la compañía
+ 
+#####Condiciones de dicha función:
+
+  * 100 pc’s
+  * 23 programas corporativos
+  * n   vulnerabilidades
+
+####_Fuente de datos_
+
+<div align="center">
+![Fuente de datos](`r input.dir`/fuentes.jpg)
+</div>
+</p>
+
+####_Algoritmo y funciones_
+
+<div align="center">
+![Algoritmo y funciones](`r input.dir`/algoritmo.jpg)
+</div>
+</p>
+
+##**Resultados (Modelo Real)**
+
+## GRAFICO 1  - Distribución de vulnerabilidades por valor CVSS
+ 
+```{r,grafic_1,include=F}
+ 
+cvss_count <-vulnerabilidades_graph %>% group_by(cvss) %>% summarise(n=n())
+b_grafic_1 <- ggplot(cvss_count, aes(x=cvss, y=n, fill=cvss))
+ 
+# creem grafic amb x com a multiples vendors
+grafic_1 <- b_grafic_1 + geom_bar(stat = "identity")
+ 
+```
+ 
+ 
+```{r grafic_g1, echo=F}
+grafic_1
+```
+
+## GRAFICO 2  - Distribución de vulnerabilidades por nivel de criticidad CVSS
+ 
+```{r,grafic_2,include=F}
+
+computers_nivel <-vulnerabilidades_graph %>% group_by(nivel) %>% summarise(n=n())
+b_grafic_2 <- ggplot(computers_nivel, aes(x=nivel, y=n, fill=nivel))
+ 
+grafic_2 <- b_grafic_2 + geom_bar(stat = "identity")
+ 
+```
+ 
+ 
+```{r grafic_g2, echo=FALSE}
+ 
+grafic_2
+ 
+```
+
+## GRAFICO 3  - Mapa dispersión vulnerabilidades parque cliente
+ 
+```{r,grafic_3,include=F}
+ 
+agrup<-vulnerabilidades_graph %>% group_by(computer) %>% summarise(n=n())
+ 
+b_grafic_3<-ggplot(aes(x=computer, y=n, color='clarity'), data=agrup) + geom_point() + scale_color_brewer(type='qual')
+ 
+grafic_3 <- b_grafic_3 + geom_point(position = 'jitter')
+ 
+```
+ 
+ 
+```{r grafic_g3, echo=FALSE}
+
+grafic_3
+
+```
+
+## GRAFICO 4 - Mapa distribución vulnerabilidades por valor escala de criticidad
+ 
+```{r,grafic_4,include=F}
+ 
+agrup<-vulnerabilidades_graph %>% group_by(cvss) %>% summarise(n=n())
+b_grafic_4<-ggplot(aes(x=cvss, y=n, color='clarity'), data=agrup) + geom_point()
+ 
+ 
+grafic_4 <- b_grafic_4 + geom_point(position = 'jitter')
+ 
+```
+ 
+ 
+```{r grafic_g4, echo=FALSE}
+ 
+grafic_4
+
+```
+
+##**Resultados (Modelo Simulado)**
+## GRAFICO 1  - Distribución de vulnerabilidades por valor CVSS
+
+```{r,grafic_5,include=F}
+ 
+cvss_count <-sim_graph %>% group_by(cvss) %>% summarise(n=n())
+b_grafic_5 <- ggplot(cvss_count, aes(x=cvss, y=n, fill=cvss))
+ 
+# creem grafic amb x com a multiples vendors
+grafic_5 <- b_grafic_5 + geom_bar(stat = "identity")
+ 
+```
+
+```{r grafic_g5, echo=F}
+grafic_5
+```
+
+## GRAFICO 2  - Distribución de vulnerabilidades por nivel de criticidad CVSS
+
+```{r,grafic_6,include=F}
+
+computers_nivel <-sim_graph %>% group_by(nivel) %>% summarise(n=n())
+b_grafic_6 <- ggplot(computers_nivel, aes(x=nivel, y=n, fill=nivel))
+ 
+grafic_6 <- b_grafic_6 + geom_bar(stat = "identity")
+ 
+```
+ 
+ 
+```{r grafic_g6, echo=FALSE}
+ 
+grafic_6
+ 
+```
+
+## GRAFICO 3  - Mapa dispersión vulnerabilidades parque cliente
+
+```{r,grafic_7,include=F}
+ 
+agrup<-sim_graph %>% group_by(equip) %>% summarise(n=n())
+ 
+b_grafic_7<-ggplot(aes(x=equip, y=n, color='clarity'), data=agrup) + geom_point() + scale_color_brewer(type='qual')
+ 
+grafic_7 <- b_grafic_7 + geom_point(position = 'jitter')
+ 
+```
+ 
+ 
+```{r grafic_g7, echo=FALSE}
+ 
+grafic_7
+ 
+```
+
+## GRAFICO 4 - Mapa distribución vulnerabilidades por valor escala de criticidad
+
+```{r,grafic_8,include=F}
+ 
+agrup<-sim_graph %>% group_by(cvss) %>% summarise(n=n())
+b_grafic_8<-ggplot(aes(x=cvss, y=n, color='clarity'), data=agrup) + geom_point()
+ 
+ 
+grafic_8 <- b_grafic_8 + geom_point(position = 'jitter')
+
+```
+ 
+```{r grafic_g8, echo=FALSE}
+
+grafic_8
+
+```
+
+## Conclusión
+
+Completada la práctica podemos concluir al respecto que:
+ 
+* El intento de crear un entorno real de instalación de software en una empresa y el análisis de sus vulnerabilidades nos lleva a una situación “singular”, porque? La aplicación del criterio de mínimos para preservar una empresa de posibles ataques hace que el nivel de riesgo del parque instalado esté definido por el valor máximo de la unidad mínima de riesgo (una vulnerabilidad de cualquier programa). Así delante de esta situación con mucha facilidad el nivel de riego de nuestro parque está en la zona alta. 
+* Si tomamos un punto de vista exclusivamente estadístico (fuera de la realidad), la función de scoring creada debería de revisarse para conseguir una mayor dispersión.
+ 
+Delante de esta situación hemos jugado con los datos para cumplir con los requerimientos de la práctica, es decir, obtención de datos origen en fuentes reales, programación del matching de los datos y revisión de las opciones de presentación de datos. 
+
+## ===================================================
