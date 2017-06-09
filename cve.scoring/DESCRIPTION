@@ -1,0 +1,10 @@
+Package: cve.scoring
+Type: Package
+Title: CVE scoring on PC's
+Version: 1.0
+Date: 2017-06-07
+Author: Fco. Javier Motos, Juan Carlos López, David Martín y Alonso Flores
+Maintainer: Fco. Javier Motos <javiermb.desarrollos@gmail.com>
+Description: Evaluate the health level from PC's of a company based on the vulnerabilities they may have.
+License: MIT
+Encoding: UTF-8
