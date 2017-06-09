@@ -1,8 +1,0 @@
-
-
-export("loadComputerSoftware")
-export("loadComputerCriticity")
-export("doMatchingApplicationsCPE")
-export("doMatchingApplicationsCVE")
-export("calculateScoring")
-
